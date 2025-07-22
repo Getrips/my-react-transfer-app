@@ -1,0 +1,26 @@
+/* src/index.css */
+
+/* Базовые директивы Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS для бесконечной карусели водителей */
+@keyframes marquee {
+  from {
+    transform: translateX(0); /* Начальное положение */
+  }
+  to {
+    transform: translateX(-50%); /* Перемещаем на 50% ширины, чтобы создать бесконечный цикл */
+  }
+}
+
+/* Применяем анимацию к контейнеру карусели */
+.animate-marquee-animation {
+  animation: marquee 30s linear infinite; /* 30s - скорость, linear - равномерно, infinite - бесконечно */
+}
+
+/* Останавливаем анимацию при наличии класса 'paused' */
+.animate-marquee-animation.paused {
+  animation-play-state: paused;
+}

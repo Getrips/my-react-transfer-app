@@ -1,15 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 // Импортируем все необходимые иконки, включая XCircle для удаления
 import { MapPin, Calendar, Plus, ChevronDown, Repeat2, Star, User, Car, Wifi, Baby, PawPrint, Award, XCircle } from 'lucide-react';
-import AutocompleteInput from './AutocompleteInput'; // Импортируем новый компонент
+import AutocompleteInput from './AutocompleteInput';
+import NavigationTabs from './NavigationTabs';
 
 function TransferPage({ setCurrentView }) {
   const [showAdditional, setShowAdditional] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('Русский');
   const [fromLocation, setFromLocation] = useState('');
   const [toLocation, setToLocation] = useState('');
-  const [stops, setStops] = useState([]); // Состояние для остановок
-  const [selectedDate, setSelectedDate] = useState(''); // Состояние для выбранной даты
+  const [stops, setStops] = useState([]);
+  const [selectedDate, setSelectedDate] = useState('');
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
 
   const languageDropdownRef = useRef(null);
@@ -91,7 +92,6 @@ function TransferPage({ setCurrentView }) {
   ];
 
   const handleSearchTransfers = () => {
-    // Используем модальное окно вместо alert()
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
     modal.innerHTML = `
@@ -109,7 +109,6 @@ function TransferPage({ setCurrentView }) {
   };
 
   const handleAllTransfers = () => {
-    // Используем модальное окно вместо alert()
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
     modal.innerHTML = `
@@ -132,24 +131,20 @@ function TransferPage({ setCurrentView }) {
     setShowLanguageDropdown(false);
   };
 
-  // Функция для добавления новой остановки
   const handleAddStop = () => {
-    setStops([...stops, '']); // Добавляем пустую строку для новой остановки
+    setStops([...stops, '']);
   };
 
-  // Функция для обновления текста остановки
   const handleStopChange = (index, value) => {
     const newStops = [...stops];
     newStops[index] = value;
     setStops(newStops);
   };
 
-  // НОВАЯ ФУНКЦИЯ: Удаление остановки
   const handleRemoveStop = (indexToRemove) => {
     setStops(stops.filter((_, index) => index !== indexToRemove));
   };
 
-  // Закрытие выпадающего списка при клике вне его
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (languageDropdownRef.current && !languageDropdownRef.current.contains(event.target)) {
@@ -161,27 +156,6 @@ function TransferPage({ setCurrentView }) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  // Автоматическая прокрутка карусели
-  useEffect(() => {
-    let scrollInterval;
-    if (carouselRef.current && !isHoveringCarousel) {
-      scrollInterval = setInterval(() => {
-        if (carouselRef.current) {
-          const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-          const maxScrollLeft = scrollWidth - clientWidth;
-          // Проверяем, достигнут ли конец прокрутки, чтобы сбросить ее
-          if (scrollLeft + clientWidth >= scrollWidth - 10) { // Небольшой допуск для точности
-            carouselRef.current.scrollLeft = 0; // Сброс к началу
-          } else {
-            carouselRef.current.scrollLeft += 200; // Прокрутка на 200px
-          }
-        }
-      }, 3000); // Каждые 3 секунды
-    }
-    return () => clearInterval(scrollInterval);
-  }, [isHoveringCarousel]);
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-pink-100 flex flex-col items-center p-4 font-inter text-gray-800">
@@ -227,6 +201,8 @@ function TransferPage({ setCurrentView }) {
         </button>
       </div>
 
+      <NavigationTabs active="transferPage" setCurrentView={setCurrentView} />
+
       <h1 className="text-4xl sm:text-5xl font-extrabold text-[#7860BE] mb-4 mt-8 text-center">
         Трансфер по Грузии
       </h1>
@@ -235,12 +211,12 @@ function TransferPage({ setCurrentView }) {
       </p>
 
       <div className="bg-white rounded-xl shadow-2xl p-6 sm:p-8 w-full max-w-2xl transform transition-all duration-300 hover:scale-[1.01] mb-12">
-        {/* Поля "Откуда?" и "Куда?" с автозаполнением */}
+        {/* Поля "Откуда?" и "Куда?" */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 relative">
           <AutocompleteInput
             value={fromLocation}
             onChange={setFromLocation}
-            onSelect={setFromLocation} // Обновляем fromLocation при выборе
+            onSelect={setFromLocation}
             placeholder="Откуда?"
             locations={locations}
             iconColor="text-blue-500"
@@ -248,7 +224,7 @@ function TransferPage({ setCurrentView }) {
           <AutocompleteInput
             value={toLocation}
             onChange={setToLocation}
-            onSelect={setToLocation} // Обновляем toLocation при выборе
+            onSelect={setToLocation}
             placeholder="Куда?"
             locations={locations}
             iconColor="text-red-500"
@@ -266,17 +242,16 @@ function TransferPage({ setCurrentView }) {
         <div className="space-y-3 mb-6">
           {stops.map((stop, index) => (
             <div key={index} className="flex items-center bg-gray-100 p-3 rounded-lg shadow-sm">
-              <MapPin size={20} className="text-gray-500 mr-3" /> {/* Изменено на MapPin для остановок */}
+              <MapPin size={20} className="text-gray-500 mr-3" />
               <input
                 type="text"
                 placeholder={`Остановка ${index + 1}`}
                 value={stop}
                 onChange={(e) => handleStopChange(index, e.target.value)}
-                list="locations-list-stops" // Используем отдельный datalist для остановок, если хотите автозаполнение
+                list="locations-list-stops"
                 className="flex-grow bg-transparent outline-none text-lg text-gray-800"
               />
-              {/* Кнопка удаления остановки */}
-              {stop && ( // Показываем кнопку только если в поле остановки есть текст
+              {stop && (
                 <button
                   type="button"
                   onClick={() => handleRemoveStop(index)}
@@ -288,14 +263,13 @@ function TransferPage({ setCurrentView }) {
               )}
             </div>
           ))}
-          {/* Datalist для предложений в остановках (если нужен) */}
           <datalist id="locations-list-stops">
             {locations.map((loc, index) => (
               <option key={index} value={loc} />
             ))}
           </datalist>
           <button
-            onClick={handleAddStop} // Используем новую функцию для добавления остановки
+            onClick={handleAddStop}
             className="w-full text-orange-500 border border-dashed border-orange-500 rounded-lg py-2 text-lg hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200"
           >
             + Добавить остановку
@@ -306,12 +280,11 @@ function TransferPage({ setCurrentView }) {
         <div className="flex items-center bg-gray-100 p-3 rounded-lg shadow-sm mb-4">
           <Calendar size={20} className="text-gray-500 mr-3" />
           <input
-            type="date" // Изменено на type="date"
+            type="date"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
             className="flex-grow bg-transparent outline-none text-lg text-gray-800"
           />
-          {/* Удалена кнопка календаря, так как type="date" предоставляет нативный календарь */}
         </div>
 
         {/* Класс автомобиля */}
@@ -399,7 +372,7 @@ function TransferPage({ setCurrentView }) {
         </div>
       </div>
 
-      {/* Карусель топовых водителей */}
+      {/* Карусель топовых водителей (плавное marquee) */}
       <div className="w-full max-w-4xl mt-12 mb-12 text-center">
         <h2 className="text-3xl sm:text-4xl font-extrabold text-[#7860BE] mb-4">
           Наши лучшие водители
@@ -408,25 +381,27 @@ function TransferPage({ setCurrentView }) {
           Познакомьтесь с водителями, которые сделают вашу поездку незабываемой
         </p>
         <div
-          className="relative w-full overflow-x-scroll scrollbar-hide"
+          className="relative w-full custom-scrollbar"
           onMouseEnter={() => setIsHoveringCarousel(true)}
           onMouseLeave={() => setIsHoveringCarousel(false)}
+          onTouchStart={() => setIsHoveringCarousel(true)}
+          onTouchEnd={() => setIsHoveringCarousel(false)}
         >
           <div
             ref={carouselRef}
-            className="flex space-x-6 py-4 px-2 snap-x snap-mandatory"
-            style={{ scrollBehavior: 'smooth' }}
+            className={`flex space-x-6 py-4 px-2 snap-x snap-mandatory animate-marquee-animation${isHoveringCarousel ? ' paused' : ''}`}
+            style={{ scrollBehavior: 'smooth', width: 'max-content' }}
           >
-            {drivers.map((driver) => (
+            {[...drivers, ...drivers].map((driver, idx) => (
               <div
-                key={driver.id}
+                key={driver.id + '-' + idx}
                 className="flex-shrink-0 w-64 bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center snap-center transform transition-all duration-300 hover:scale-105"
               >
                 <img
                   src={driver.image}
                   alt={driver.name}
                   className="w-24 h-24 rounded-full object-cover mb-4 border-4 border-purple-300"
-                  onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/100x100/CCCCCC/333333?text=N/A" }}
+                  onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100/CCCCCC/333333?text=N/A'; }}
                 />
                 <h3 className="text-xl font-semibold text-gray-800 mb-1">{driver.name}</h3>
                 <div className="flex items-center text-yellow-500 mb-2">

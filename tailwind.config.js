@@ -10,6 +10,20 @@ module.exports = {
         mainText: "#FDFCFF",      // цвет текста
         accent: "#11131E",        // акцент
       },
+      fontFamily: {
+        inter: [
+          "Inter",
+          "ui-sans-serif",
+          "system-ui",
+          "-apple-system",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "Arial",
+          "Noto Sans",
+          "sans-serif",
+        ],
+      },
     },
   },
   plugins: [],

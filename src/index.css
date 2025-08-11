@@ -36,3 +36,12 @@
 .animate-marquee-animation.paused {
   animation-play-state: paused; /* Останавливает текущую анимацию */
 }
+
+/* Кроссбраузерное скрытие скроллбара */
+.custom-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+.custom-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari и Chrome */
+}
